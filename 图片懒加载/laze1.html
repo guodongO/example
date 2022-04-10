@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片懒加载方法一</title>
+    <style>
+        img{
+            width: 1244px;
+            height: 800px;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>图片懒加载方法一</h3>
+    <!-- 图片，用一个其他属性存储真正的图片地址： -->
+    <img data-src="img/1.webp" src="img/0.webp" alt="xxx" />
+    <img data-src="img/2.webp" src="img/0.webp" alt="xxx" />
+    <img data-src="img/3.webp" src="img/0.webp" alt="xxx" />
+    <img data-src="img/4.webp" src="img/0.webp" alt="xxx" />
+    <img data-src="img/5.webp" src="img/0.webp" alt="xxx" />
+    <img data-src="img/6.webp" src="img/0.webp" alt="xxx" />
+    <img data-src="img/7.webp" src="img/0.webp" alt="xxx" />
+
+    <script>
+        const images = document.querySelectorAll("img");
+        // lazyload(); //页面载入完毕加载可视区域内的图片 要看效果的话还是不加比较好
+        // 节流函数，保证每200ms触发一次
+        function throttle(fn, delay) {
+            let timer = null
+            return function (...args) {
+                if (!timer) {
+                    timer = setTimeout(() => {
+                        timer = null
+                        fn.apply(this, args)
+                    }, delay)
+                }
+            }
+        }
+        window.addEventListener('scroll', throttle(lazyload, 500))
+        function lazyload() { //监听页面滚动事件
+            var seeHeight = window.innerHeight; //可见区域高度
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop; //滚动条距离顶部高度
+            for (let i of images) {
+                //判断当前图片是否在可视区内
+                if (i.offsetTop <= seeHeight+scrollTop) {
+                    //getAttribute得到某个元素的属性值，获取自定义data-src属性的值
+                    let trueSrc = i.getAttribute("data-src");
+                    //setAttribute设置某个属性的属性值，把值赋值给图片的src属性
+                    i.setAttribute("src", trueSrc);
+                }
+            }
+            // for (let i of images) {
+            //     //计算方式和第一种方式不同
+            //     if (i.getBoundingClientRect().top < window.innerHeight) {
+            //         let trueSrc = i.getAttribute("data-src");
+            //         i.setAttribute("src", trueSrc);
+            //     }
+            // }    其中，getBoundingClientRect().top 为元素相对于窗口的位置；window.innerHeight 为当前窗口的高度；
+            // 当元素对于窗口的位置小于当前窗口的高度时，那自然处于了窗口可视区了。
+        }
+
+    </script>
+</body>
+
+</html>

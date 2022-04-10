@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片懒加载方法二</title>
+    <style>
+        img {
+            width: 1244px;
+            height: 800px;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>图片懒加载方法二</h3>
+    <!-- 图片，用一个其他属性存储真正的图片地址： -->
+    <img data-src="img/1.webp" src="img/0.webp" alt="xxx" />
+    <img data-src="img/2.webp" src="img/0.webp" alt="xxx" />
+    <img data-src="img/3.webp" src="img/0.webp" alt="xxx" />
+    <img data-src="img/4.webp" src="img/0.webp" alt="xxx" />
+    <img data-src="img/5.webp" src="img/0.webp" alt="xxx" />
+    <img data-src="img/6.webp" src="img/0.webp" alt="xxx" />
+    <img data-src="img/7.webp" src="img/0.webp" alt="xxx" />
+
+    <script>
+        const images = document.querySelectorAll("img");
+
+        // 传给IntersectionObserver的回调函数
+        // 在目标元素能看见时触发一次，目标元素看不见了时再触发一次
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const image = entry.target;
+                    const data_src = image.getAttribute("data-src");
+                    image.setAttribute("src", data_src);
+                    // 图片被加载后取消观察
+                    observer.unobserve(image);
+                }
+            });
+        });
+
+        images.forEach(image => {
+            observer.observe(image);
+        });
+
+
+    </script>
+</body>
+
+</html>
